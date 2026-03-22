@@ -101,8 +101,8 @@ Example:
 | Field | Required | Description |
 |------|------|------|
 | `name` | yes | Name of the lock shown in HomeKit |
-| `pin` | yes | Physical GPIO pin connected to the relay |
-| `duration` | no | Relay activation time in milliseconds (default **500 ms**) |
+| `pin` | yes | Physical GPIO pin connected to the relay (recommended 11, 12, 13 or 15)|
+| `duration` | no | Relay activation time in milliseconds (from 100 to 2000, default **500 ms**) |
 
 
 ## Troubleshooting
