@@ -111,17 +111,23 @@ class ElectricRimLockAccessory {
 
     // Validate name and pin
     if (!this.name || !this.pin) {
-        this.log.warn("⚠ RimLock not configured correctly: name or pin missing. Plugin disabled.");
+        this.log.error("Plugin not configured correctly: name or pin missing.");
         this.disabled = true;
         return;
     }
 
     // Raspberry Pi check
     if (!/Raspberry Pi/i.test(cpuInfoCache)) {
-      this.log.warn("⚠ This plugin is intended for Raspberry Pi. Some features may not work.");
+      this.log.warn("This plugin is intended for Raspberry Pi: some features may not work.");
     }  
-    
-    platform.initPin(this.pin);
+ 
+  	try {
+  		platform.initPin(this.pin);
+	  } catch (err) {
+  		this.log.error("GPIO init failed: invalid pin number.");
+  		this.disabled = true;
+  		return;
+	  }
 
     this.setupInfoService();
     this.setupLockService();
