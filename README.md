@@ -38,7 +38,7 @@ When HomeKit sends the unlock command:
 
 ## Circuit Diagram
 
-![Schematic](https://github.com/roberto-montanari/homebridge-gpio-electric-rim-lock/blob/master/images/schematic.png?raw=true)
+<img width="930" height="460" alt="schematic" src="https://github.com/user-attachments/assets/d1b19ad1-3346-4870-9b0b-4e80f4411840" />
 
 
 ## Installation
