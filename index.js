@@ -55,7 +55,7 @@ class ElectricRimLockPlatform {
     locks.forEach(lock => {
 
       if (!lock.name || lock.pin === undefined) {
-        this.log.warn("⚠ Lock missing name or pin, skipping.");
+        this.log.warn("Plugin not configured correctly: name or pin missing.");
         return;
       }
 
