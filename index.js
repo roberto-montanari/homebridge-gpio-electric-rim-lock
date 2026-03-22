@@ -18,19 +18,16 @@ module.exports = (homebridge) => {
   );
 };
 
-// Get Raspberry Pi serial number
 function getSerial() {
   try {
-    const serialLine = cpuInfoCache.split("\n").find((line) => line.startsWith("Serial"));
-    return serialLine ? serialLine.split(":")[1].trim() : "UNKNOWN";
+    const line = cpuInfoCache.split("\n").find(l => l.startsWith("Serial"));
+    return line ? line.split(":")[1].trim() : "UNKNOWN";
   } catch {
     return "UNKNOWN";
   }
 }
 
-// Platform class
 class ElectricRimLockPlatform {
-
   constructor(log, config, api) {
     this.log = log;
     this.config = config;
@@ -51,52 +48,65 @@ class ElectricRimLockPlatform {
   }
 
   discoverDevices() {
-    const locks = this.config.locks || [];
-    locks.forEach(lock => {
+    const locks = Array.isArray(this.config.locks) ? this.config.locks : [];
 
+    locks.forEach(lock => {
       if (!lock.name || lock.pin === undefined) {
-        this.log.warn("Plugin not configured correctly: name or pin missing.");
+        this.log.warn("Skipping invalid lock config: name or pin missing.");
         return;
       }
 
       const uuid = this.api.hap.uuid.generate("tiro-lock-" + lock.pin);
-      const existingAccessory = this.accessories.find(a => a.UUID === uuid);
+      const existing = this.accessories.find(a => a.UUID === uuid);
 
-      if (existingAccessory) {
-        this.log("Restoring:", existingAccessory.displayName);
-        existingAccessory.context = lock;
-        new ElectricRimLockAccessory(this, existingAccessory);
+      if (existing) {
+        this.log("Restoring:", existing.displayName);
+        existing.context = lock;
+        new ElectricRimLockAccessory(this, existing);
       } else {
         this.log("Adding:", lock.name);
-        const accessory = new this.api.platformAccessory(lock.name, uuid);
-        accessory.category = this.api.hap.Categories.DOOR_LOCK;
-        accessory.context = lock;
-        new ElectricRimLockAccessory(this, accessory);
+        const acc = new this.api.platformAccessory(lock.name, uuid);
+        acc.category = this.api.hap.Categories.DOOR_LOCK;
+        acc.context = lock;
+        new ElectricRimLockAccessory(this, acc);
         this.api.registerPlatformAccessories(
           "homebridge-gpio-electric-rim-lock",
           "Tiro",
-          [accessory]
+          [acc]
         );
       }
-
     });
+
+    const validUUIDs = new Set(
+      locks.map(lock => this.api.hap.uuid.generate("tiro-lock-" + lock.pin))
+    );
+
+    const toRemove = this.accessories.filter(a => !validUUIDs.has(a.UUID));
+
+    if (toRemove.length) {
+      this.log(`Removing ${toRemove.length} stale accessories`);
+      toRemove.forEach(a => this.log("Removing:", a.displayName));
+
+      this.api.unregisterPlatformAccessories(
+        "homebridge-gpio-electric-rim-lock",
+        "Tiro",
+        toRemove
+      );
+
+      this.accessories = this.accessories.filter(a => validUUIDs.has(a.UUID));
+    }
   }
 
   initPin(pin) {
-
     if (this.initializedPins.has(pin)) return;
-  
     rpio.open(pin, rpio.OUTPUT, rpio.LOW);
-  
-  	this.initializedPins.add(pin);
+    this.initializedPins.add(pin);
     this.log("GPIO initialized:", pin);
   }
 }
 
-// Electric Rim Lock Accessory
 class ElectricRimLockAccessory {
   constructor(platform, accessory) {
-  
     this.platform = platform;
     this.log = platform.log;
     this.accessory = accessory;
@@ -109,32 +119,29 @@ class ElectricRimLockAccessory {
     this.version = require("./package.json").version;
     this.busy = false;
 
-    // Validate name and pin
     if (!this.name || this.pin === undefined) {
-        this.log.error("Plugin not configured correctly: name or pin missing.");
-        this.disabled = true;
-        return;
+      this.log.error("Plugin not configured correctly: name or pin missing.");
+      this.disabled = true;
+      return;
     }
 
-    // Raspberry Pi check
     if (!/Raspberry Pi/i.test(cpuInfoCache)) {
       this.log.warn("This plugin is intended for Raspberry Pi: some features may not work.");
-    }  
- 
-  	try {
-  		platform.initPin(this.pin);
-	  } catch (err) {
-  		this.log.error("GPIO init failed: invalid pin number.");
-  		this.disabled = true;
-  		return;
-	  }
+    }
+
+    try {
+      platform.initPin(this.pin);
+    } catch {
+      this.log.error("GPIO init failed: invalid pin number.");
+      this.disabled = true;
+      return;
+    }
 
     this.setupInfoService();
     this.setupLockService();
   }
 
   setupInfoService() {
-
     const info =
       this.accessory.getService(Service.AccessoryInformation) ||
       this.accessory.addService(Service.AccessoryInformation);
@@ -147,7 +154,6 @@ class ElectricRimLockAccessory {
   }
 
   setupLockService() {
-
     this.lockService =
       this.accessory.getService(Service.LockMechanism) ||
       this.accessory.addService(Service.LockMechanism, this.name);
@@ -159,10 +165,10 @@ class ElectricRimLockAccessory {
     this.lockService
       .getCharacteristic(Characteristic.LockTargetState)
       .onGet(() => 1)
-      .onSet((state) => this.setLock(state));
+      .onSet(state => this.setLock(state));
   }
 
-  async setLock(state) {
+  setLock(state) {
     if (this.busy) {
       this.log("Ignored double trigger:", this.name);
       return;
