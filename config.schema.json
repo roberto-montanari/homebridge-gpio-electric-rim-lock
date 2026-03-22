@@ -25,27 +25,30 @@
         "minItems": 1,
         "items": {
           "type": "object",
-          "required": ["name", "pin", "duration"],
+          "required": ["name", "pin"],
           "properties": {
           
             "name": {
               "title": "Door name",
               "type": "string",
-              "minLength": 1
+              "minLength": 1,
+           	  "description": "Name of the door lock shown in HomeKit"
             },
           
             "pin": {
               "title": "GPIO pin number",
               "type": "integer",
-              "enum": [11, 12, 13, 15]
+              "enum": [11, 12, 13, 15],
+              "description": "Physical GPIO pin connected to the relay"
             },
           
             "duration": {
               "title": "Pulse duration (ms)",
               "type": "integer",
               "default": 500,
-              "minimum": 500,
-              "maximum": 2000
+              "minimum": 100,
+              "maximum": 2000,
+              "description": "How long the relay stays active to simulate button press (typically 500 ms)"
             }
           }
         }
