@@ -3,6 +3,7 @@
 ![npm version](https://img.shields.io/npm/v/homebridge-gpio-electric-rim-lock)
 ![license](https://img.shields.io/npm/l/homebridge-gpio-electric-rim-lock)
 ![Platform](https://img.shields.io/badge/platform-Raspberry%20Pi-red)
+[![verified-by-homebridge](https://img.shields.io/badge/homebridge-verified-blueviolet?color=%23491F59&style=flat)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)
 
 Homebridge plugin to control **electric rim locks** using Raspberry Pi GPIO pins.
 This plugin allows you to open electric rim locks from **Apple HomeKit** by triggering a relay connected to a Raspberry Pi.
