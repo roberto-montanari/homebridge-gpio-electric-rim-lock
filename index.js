@@ -110,7 +110,7 @@ class ElectricRimLockAccessory {
     this.busy = false;
 
     // Validate name and pin
-    if (!this.name || !this.pin) {
+    if (!this.name || this.pin === undefined) {
         this.log.error("Plugin not configured correctly: name or pin missing.");
         this.disabled = true;
         return;
