@@ -28,12 +28,12 @@
   "homepage": "https://github.com/roberto-montanari/homebridge-gpio-electric-rim-lock#readme",
   "funding": [
     {
-      "type": "buymeacoffee",
-      "url": "https://buymeacoffee.com/roberto.montanari"
-    },
-    {
       "type" : "ko-fi",
       "url" : "https://ko-fi.com/roberto_montanari"
+    },
+    {
+      "type": "buymeacoffee",
+      "url": "https://buymeacoffee.com/roberto.montanari"
     }
   ],
     
