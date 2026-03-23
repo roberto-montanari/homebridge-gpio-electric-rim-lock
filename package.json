@@ -1,6 +1,6 @@
 {
   "name": "homebridge-gpio-electric-rim-lock",
-  "version": "3.3.0",
+  "version": "3.4.0",
   "description": "Homebridge plugin to open electric rim locks via Raspberry Pi GPIO pins",
   "main": "index.js",
   "scripts": {
@@ -26,10 +26,17 @@
     "url": "https://github.com/roberto-montanari/homebridge-gpio-electric-rim-lock/issues"
   },
   "homepage": "https://github.com/roberto-montanari/homebridge-gpio-electric-rim-lock#readme",
-  "funding": {
-    "type": "buymeacoffee",
-    "url": "https://buymeacoffee.com/roberto.montanari"
-  },
+  "funding": [
+    {
+      "type": "buymeacoffee",
+      "url": "https://buymeacoffee.com/roberto.montanari"
+    },
+    {
+      "type" : "ko-fi",
+      "url" : "https://ko-fi.com/roberto1002"
+    }
+  ],
+    
   "engines": {
     "node": "^18.17.0 || ^20.9.0 || ^22 || ^24",
     "homebridge": "^1.6.0 || ^2.0.0"
