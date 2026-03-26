@@ -35,8 +35,7 @@
       "type": "buymeacoffee",
       "url": "https://buymeacoffee.com/roberto.montanari"
     }
-  ],
-    
+  ],    
   "engines": {
     "node": "^18.17.0 || ^20.9.0 || ^22 || ^24",
     "homebridge": "^1.6.0 || ^2.0.0"
